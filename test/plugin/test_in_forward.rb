@@ -859,15 +859,18 @@ class ForwardInputTest < Test::Unit::TestCase
   # nil: socket read timeout
   def read_data(io, timeout)
     res = ''
-    # timeout_at = Time.now + timeout
+    select_timeout = 2
+    timeout_at = Time.now + timeout
     begin
       buf = ''
       io_activated = false
-      while IO.select([io], nil, nil, timeout)
-        io_activated = true
-        buf = io.readpartial(2048)
-        res ||= ''
-        res << buf
+      while Time.now < timeout_at
+        if IO.select([io], nil, nil, select_timeout)
+          io_activated = true
+          buf = io.readpartial(2048)
+          res ||= ''
+          res << buf
+        end
       end
       res = nil unless io_activated # timeout without no data arrival
     rescue Errno::EAGAIN
@@ -881,7 +884,7 @@ class ForwardInputTest < Test::Unit::TestCase
   end
 
   def simulate_auth_sequence(io, shared_key=SHARED_KEY, username=USER_NAME, password=USER_PASSWORD)
-    auth_response_timeout = 10
+    auth_response_timeout = 5
     shared_key_salt = 'salt'
 
     # reading helo
