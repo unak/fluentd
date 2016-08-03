@@ -858,22 +858,19 @@ class ForwardInputTest < Test::Unit::TestCase
   # '' : socket is disconnected without any data
   # nil: socket read timeout
   def read_data(io, timeout)
-    omit if Fluent.windows? && RUBY_VERSION < "2.3.0"
     res = ''
-    timeout_at = Time.now + timeout
+    # timeout_at = Time.now + timeout
     begin
       buf = ''
-      while io.read_nonblock(2048, buf)
-        if buf == ''
-          sleep 0.01
-          break if Time.now >= timeout_at
-          next
-        end
+      io_activated = false
+      while IO.select([io], nil, nil, timeout)
+        io_activated = true
+        buf = io.readpartial(2048)
+        res ||= ''
         res << buf
-        buf = ''
       end
-      res = nil # timeout
-    rescue Errno::EAGAIN # TODO replace IO::WaitReadable if we drop Ruby2.0 support
+      res = nil unless io_activated # timeout without no data arrival
+    rescue Errno::EAGAIN
       sleep 0.01
       retry if res == ''
       # if res is not empty, all data in socket buffer are read, so do not retry
