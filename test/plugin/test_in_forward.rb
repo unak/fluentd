@@ -886,6 +886,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
     # reading helo
     helo_data = read_data(io, auth_response_timeout)
+    raise "Authentication packet timeout" unless helo_data
+    raise "Authentication connection closed" if helo_data == ''
     # ['HELO', options(hash)]
     helo = MessagePack.unpack(helo_data)
     raise "Invalid HELO header" unless helo[0] == 'HELO'
@@ -914,6 +916,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
     # reading pong
     pong_data = read_data(io, auth_response_timeout)
+    raise "PONG packet timeout" unless pong_data
+    raise "PONG connection closed" if pong_data == ''
     # ['PING', bool(auth_result), string(reason_if_failed), self_hostname, shared_key_digest]
     pong = MessagePack.unpack(pong_data)
     raise "Invalid PONG header" unless pong[0] == 'PONG'
