@@ -413,6 +413,11 @@ class ForwardOutputTest < Test::Unit::TestCase
     ]
     d = create_driver(output_conf)
 
+    d.register_run_post_condition do
+      target_input_driver.emits.length == 2
+    end
+    d.run_timeout = 2
+
     time = Time.parse("2011-01-02 13:14:15 UTC").to_i
     records = [
       {"a" => 1},
@@ -472,6 +477,11 @@ class ForwardOutputTest < Test::Unit::TestCase
       {"a" => 1},
       {"a" => 2}
     ]
+
+    d.register_run_post_condition do
+      target_input_driver.emits.length == 2
+    end
+    d.run_timeout = 2
 
     target_input_driver.run do
       d.run do
