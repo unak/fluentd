@@ -226,6 +226,8 @@ class ForwardInputTest < Test::Unit::TestCase
         send_data packer.write(["tag1", entries]).to_s, **options
       end
       assert_equal(records, d.emits)
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -265,6 +267,8 @@ class ForwardInputTest < Test::Unit::TestCase
       end
 
       assert_equal(records, d.emits)
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -304,6 +308,8 @@ class ForwardInputTest < Test::Unit::TestCase
       end
 
       assert_equal 2, d.instance.log.logs.count { |line| line =~ /skip invalid event/ }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
   end
 
@@ -346,6 +352,8 @@ class ForwardInputTest < Test::Unit::TestCase
         send_data packer.write(["tag1", entries]).to_s, **options
       end
       assert_equal(records, d.emits)
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -384,6 +392,8 @@ class ForwardInputTest < Test::Unit::TestCase
         send_data packer.write(["tag1", entries]).to_s, **options
       end
       assert_equal(records, d.emits)
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -427,6 +437,8 @@ class ForwardInputTest < Test::Unit::TestCase
       end
 
       assert_equal 2, d.instance.log.logs.count { |line| line =~ /skip invalid event/ }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
   end
 
@@ -591,6 +603,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal expected_acks, @responses.map { |res| MessagePack.unpack(res)['ack'] }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     # FIX: response is not pushed into @responses because IO.select has been blocked until InputForward shutdowns
@@ -635,6 +649,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal expected_acks, @responses.map { |res| MessagePack.unpack(res)['ack'] }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -678,6 +694,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal expected_acks, @responses.map { |res| MessagePack.unpack(res)['ack'] }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -722,6 +740,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal expected_acks, @responses.map { |res| JSON.parse(res)['ack'] }
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
   end
 
@@ -763,6 +783,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal ["", ""], @responses
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -802,6 +824,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal [""], @responses
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -841,6 +865,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal [""], @responses
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
 
     data(tcp: {
@@ -879,6 +905,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       assert_equal events, d.emits
       assert_equal ["", ""], @responses
+
+      sleep 0.1 while d.instance.instance_eval{ @thread }.status # to confirm that plugin stopped completely
     end
   end
 
