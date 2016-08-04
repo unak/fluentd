@@ -420,6 +420,8 @@ class ForwardOutputTest < Test::Unit::TestCase
     ]
 
     target_input_driver.run do
+      sleep 0.1 until target_input_driver.instance.instance_eval{ @thread } && target_input_driver.instance.instance_eval{ @thread }.status
+
       d.run do
         records.each do |record|
           d.emit(record, time)
@@ -434,6 +436,7 @@ class ForwardOutputTest < Test::Unit::TestCase
     end
 
     emits = target_input_driver.emits
+    assert{ emits != [] }
     assert_equal(['test', time, records[0]], emits[0])
     assert_equal(['test', time, records[1]], emits[1])
   end
@@ -480,6 +483,8 @@ class ForwardOutputTest < Test::Unit::TestCase
     ]
 
     target_input_driver.run do
+      sleep 0.1 until target_input_driver.instance.instance_eval{ @thread } && target_input_driver.instance.instance_eval{ @thread }.status
+
       d.run do
         records.each do |record|
           d.emit(record, time)
@@ -494,6 +499,7 @@ class ForwardOutputTest < Test::Unit::TestCase
     end
 
     emits = target_input_driver.emits
+    assert{ emits != [] }
     assert_equal(['test', time, records[0]], emits[0])
     assert_equal(['test', time, records[1]], emits[1])
   end
