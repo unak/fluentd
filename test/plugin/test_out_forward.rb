@@ -427,8 +427,8 @@ class ForwardOutputTest < Test::Unit::TestCase
 
         # run_post_condition of Fluent::Test::*Driver are buggy:
         t = Time.now
-        while Time.now < t + 5 && target_input_driver.emits.size < 2
-          sleep 1
+        while Time.now < t + 15 && target_input_driver.emits.size < 2
+          sleep 0.1
         end
       end
     end
@@ -487,8 +487,8 @@ class ForwardOutputTest < Test::Unit::TestCase
 
         # run_post_condition of Fluent::Test::*Driver are buggy:
         t = Time.now
-        while Time.now < t + 5 && target_input_driver.emits.size < 2
-          sleep 1
+        while Time.now < t + 15 && target_input_driver.emits.size < 2
+          sleep 0.1
         end
       end
     end
