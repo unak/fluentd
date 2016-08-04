@@ -217,6 +217,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = []
         records.each {|tag, _time, record|
           entries << [_time, record]
@@ -253,6 +255,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = []
         records.each {|tag, _time, record|
           entries << [_time, record]
@@ -290,6 +294,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = records.map { |tag, _time, record| [_time, record] }
         # These entries are skipped
         entries << ['invalid time', {'a' => 3}] << [time, 'invalid record']
@@ -331,6 +337,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = ''
         records.each {|_tag, _time, record|
           packer(entries).write([_time, record]).flush
@@ -367,6 +375,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = ''
         records.each {|tag, _time, record|
           packer(entries).write([_time, record]).flush
@@ -403,6 +413,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = records.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = records.map { |tag, _time, record| [_time, record] }
         # These entries are skipped
         entries << ['invalid time', {'a' => 3}] << [time, 'invalid record']
@@ -436,6 +448,8 @@ class ForwardInputTest < Test::Unit::TestCase
       assert chunk.size < (32 * 1024 * 1024)
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         unpacker.feed_each(chunk) do |obj|
           d.instance.send(:emit_message, obj, chunk.size, "host: 127.0.0.1, addr: 127.0.0.1, port: 0000")
         end
@@ -465,6 +479,8 @@ class ForwardInputTest < Test::Unit::TestCase
       chunk = [ "test.tag", (0...16).map{|i| [time + i, {"data" => str}] } ].to_msgpack
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         unpacker.feed_each(chunk) do |obj|
           d.instance.send(:emit_message, obj, chunk.size, "host: 127.0.0.1, addr: 127.0.0.1, port: 0000")
         end
@@ -492,6 +508,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       # d.run => send_data
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         unpacker.feed_each(chunk) do |obj|
           d.instance.send(:emit_message, obj, chunk.size, "host: 127.0.0.1, addr: 127.0.0.1, port: 0000")
         end
@@ -515,6 +533,8 @@ class ForwardInputTest < Test::Unit::TestCase
 
       # d.run => send_data
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         d.instance.send(:emit_message, data, 1000000000, "host: 127.0.0.1, addr: 127.0.0.1, port: 0000")
       end
 
@@ -560,6 +580,8 @@ class ForwardInputTest < Test::Unit::TestCase
       expected_acks = []
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         events.each {|tag, _time, record|
           op = { 'chunk' => Base64.encode64(record.object_id.to_s) }
           expected_acks << op['chunk']
@@ -600,6 +622,8 @@ class ForwardInputTest < Test::Unit::TestCase
       expected_acks = []
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = []
         events.each {|_tag, _time, record|
           entries << [_time, record]
@@ -641,6 +665,8 @@ class ForwardInputTest < Test::Unit::TestCase
       expected_acks = []
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = ''
         events.each {|_tag, _time,record|
           [time, record].to_msgpack(entries)
@@ -685,6 +711,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = events.length
       d.run_timeout = 2
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         events.each {|tag, _time, record|
           op = { 'chunk' => Base64.encode64(record.object_id.to_s) }
           expected_acks << op['chunk']
@@ -726,6 +754,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = events.length
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         events.each {|tag, _time, record|
           send_data [tag, _time, record].to_msgpack, try_to_receive_response: true, **options
         }
@@ -761,6 +791,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = events.length
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = []
         events.each {|tag, _time, record|
           entries << [_time, record]
@@ -798,6 +830,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = events.length
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         entries = ''
         events.each {|tag, _time, record|
           [_time, record].to_msgpack(entries)
@@ -836,6 +870,8 @@ class ForwardInputTest < Test::Unit::TestCase
       d.expected_emits_length = events.length
 
       d.run do
+        sleep 0.1 until d.instance.instance_eval{ @thread } && d.instance.instance_eval{ @thread }.status
+
         events.each {|tag, _time, record|
           send_data [tag, _time, record].to_json, try_to_receive_response: true, **options
         }
