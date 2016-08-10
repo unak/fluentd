@@ -247,6 +247,7 @@ module Fluent
       daemonize = !!params['daemonize']
       main_cmd = params['main_cmd']
       signame = params['signame']
+      command_sender = Fluent.windows? ? "pipe" : "signal"
 
       se_config = {
           worker_type: 'spawn',
@@ -277,6 +278,7 @@ module Fluent
           fluentd_conf: fluentd_conf,
           main_cmd: main_cmd,
           signame: signame,
+          command_sender: command_sender,
       }
       if daemonize
         se_config[:pid_path] = pid_path
@@ -553,6 +555,29 @@ module Fluent
       trap :USR1 do
         flush_buffer
       end unless Fluent.windows?
+
+      if Fluent.windows?
+        command_pipe = STDIN.dup
+        STDIN.reopen(File::NULL, "rb")
+        command_pipe.binmode
+        command_pipe.sync = true
+
+        Thread.new do
+          loop do
+            cmd = command_pipe.gets.chomp
+            case cmd
+            when "GRACEFUL_STOP", "IMMEDIATE_STOP"
+              $log.debug "fluentd main process get #{cmd} command"
+              @finished = true
+              $log.debug "getting start to shutdown main process"
+              Fluent::Engine.stop
+              break
+            else
+              $log.warn "fluentd main process get unknown command [#{cmd}]"
+            end
+          end
+        end
+      end
     end
 
     def flush_buffer
